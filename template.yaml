@@ -1,0 +1,27 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Escola de software - Blog - Search BlogPost - Lambda Function
+Parameters:
+  Environment:
+    Description: Environment
+    Type: String
+
+Resources:
+  SearchBlogPostFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Join ["_", [!Ref Environment, SearchBlogPostFn]]
+      Description: Search Blogpost function
+      CodeUri: src/
+      Handler: app.lambdaHandler
+      Runtime: nodejs16.x
+      Architectures:
+        - x86_64
+      Timeout: 1
+      Policies:
+        - AmazonDynamoDBReadOnlyAccess
+      Environment:
+        Variables:
+          BlogPostTableName:
+            Fn::Join: ["_", [!Ref Environment, escoladesoftware_blog_blogpost]]
+          Region: us-east-1

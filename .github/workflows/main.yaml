@@ -1,0 +1,30 @@
+name: Deploy lambda - Prod
+on:
+  push:
+    branches: [main]
+
+jobs:
+  Deploy-stack:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Restore dependencies
+        run: cd src && npm install
+
+      - name: Package
+        run: |
+          sam package --s3-bucket ${{ secrets.AWS_BUCKET_DEPLOY }} --template-file template.yaml --output-template-file deploy.yaml
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy
+        run: |
+          aws cloudformation deploy --template-file deploy.yaml --stack-name prod-escoladesoftware-blog-searchblogpost-bykey-fn --capabilities CAPABILITY_NAMED_IAM --parameter-overrides  file://infra/prod.parameters.json
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}

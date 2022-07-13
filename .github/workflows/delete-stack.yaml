@@ -1,0 +1,22 @@
+name: Delete Stack Workflow
+on:
+  workflow_dispatch:
+    inputs:
+      stack-name:
+        description: "Stack name to delete"
+        required: true
+
+jobs:
+  Delete-stack:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Delete Stack
+        run: |
+          aws cloudformation delete-stack --stack-name ${{ github.event.inputs.stack-name}}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
