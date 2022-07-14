@@ -23,7 +23,8 @@ exports.SearchBlogPost = async function (inputSearch) {
 
     if (inputSearch.lastItem)
         command.input.ExclusiveStartKey = {
-            "title": { S: inputSearch.lastItem }
+            "title": { S: inputSearch.lastItem.title },
+            "id": { S: inputSearch.lastItem.id }
         };
 
     const response = await client.send(command);
