@@ -29,6 +29,5 @@ exports.SearchBlogPost = async function (inputSearch) {
 
     const response = await client.send(command);
 
-    return { Items: response.Items, ScannedCount: response.ScannedCount };
-
+    return { Items: response.Items, LastEvaluatedKey: response.LastEvaluatedKey, ScannedCount: response.ScannedCount };
 }

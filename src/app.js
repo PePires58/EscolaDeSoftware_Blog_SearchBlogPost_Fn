@@ -23,7 +23,8 @@ exports.lambdaHandler = async (event, context) => {
 
         const resultBody = {
             Items: resultDbArray,
-            ScannedCount: resultDb.ScannedCount
+            ScannedCount: resultDb.ScannedCount,
+            LastEvaluatedKey: resultDb.LastEvaluatedKey
         }
 
         response = {
