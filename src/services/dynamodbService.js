@@ -1,4 +1,4 @@
-const { DynamoDBClient, QueryCommand } = require("@aws-sdk/client-dynamodb");
+const { DynamoDBClient, ScanCommand } = require("@aws-sdk/client-dynamodb");
 
 exports.SearchBlogPost = async function (key) {
 
@@ -7,9 +7,9 @@ exports.SearchBlogPost = async function (key) {
     }
 
     const client = new DynamoDBClient({ region: process.env.Region });
-    const command = new QueryCommand({
+    const command = new ScanCommand({
         TableName: process.env.BlogPostTableName,
-        KeyConditionExpression: "id = id and begins_with(title, :title)",
+        FilterExpression: "begins_with(title, :title)",
         ExpressionAttributeValues: {
             ":title": { S: key.toString() }
         },
