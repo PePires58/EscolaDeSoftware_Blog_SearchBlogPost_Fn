@@ -4,9 +4,13 @@ const dynamodbService = require('./services/dynamodbService');
 
 exports.lambdaHandler = async (event, context) => {
     try {
-        const resultDb = await dynamodbService.SearchBlogPost(event.queryStringParameters.value);
+        const inputSearch = {
+            value: event.queryStringParameters.value,
+            lastItem: event.queryStringParameters.lastItem
+        }
+        const resultDb = await dynamodbService.SearchBlogPost(inputSearch);
 
-        const resultBody = resultDb.map((item) => {
+        const resultDbArray = resultDb.Items.map((item) => {
             return {
                 Id: item.id.S,
                 Title: item.title.S,
@@ -16,6 +20,11 @@ exports.lambdaHandler = async (event, context) => {
                 Resume: item.resume.S
             }
         });
+
+        const resultBody = {
+            Items: resultDbArray,
+            ScannedCount: resultDb.ScannedCount
+        }
 
         response = {
             'statusCode': 200,
