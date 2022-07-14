@@ -6,7 +6,7 @@ exports.lambdaHandler = async (event, context) => {
     try {
         const inputSearch = {
             value: event.queryStringParameters.value,
-            lastItem: event.queryStringParameters.lastItem
+            lastItem: event.headers["lastItem"]
         }
         const resultDb = await dynamodbService.SearchBlogPost(inputSearch);
 
