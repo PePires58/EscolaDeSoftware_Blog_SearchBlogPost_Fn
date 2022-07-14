@@ -5,7 +5,17 @@ const dynamodbService = require('./services/dynamodbService');
 exports.lambdaHandler = async (event, context) => {
     try {
         const resultDb = await dynamodbService.SearchBlogPost(event.queryStringParameters.value);
-        const resultBody = resultDb;
+
+        const resultBody = resultDb.map((item) => {
+            return {
+                Id: item.id.S,
+                Title: item.title.S,
+                Category: item.category.S,
+                Image_principal_key: item.image_principal_key.S,
+                Post_date: item.post_date.S,
+                Resume: item.resume.S
+            }
+        });
 
         response = {
             'statusCode': 200,
