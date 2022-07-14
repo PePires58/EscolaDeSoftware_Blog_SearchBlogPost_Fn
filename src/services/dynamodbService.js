@@ -1,22 +1,33 @@
-const { DynamoDBClient, QueryCommand } = require("@aws-sdk/client-dynamodb");
+const { DynamoDBClient, ScanCommand } = require("@aws-sdk/client-dynamodb");
 
-exports.SearchBlogPost = async function (key) {
+exports.SearchBlogPost = async function (inputSearch) {
 
-    if (!key) {
-        key = '';
+    if (!inputSearch.value) {
+        inputSearch.value = '';
+    }
+    if (!inputSearch.lastItem) {
+        inputSearch.lastItem = undefined;
     }
 
     const client = new DynamoDBClient({ region: process.env.Region });
-    const command = new QueryCommand({
+    const command = new ScanCommand({
         TableName: process.env.BlogPostTableName,
-        KeyConditionExpression: "title BEGINS_WITH :title",
+        FilterExpression: "begins_with(title, :title)",
         ExpressionAttributeValues: {
-            ":title": { S: key.toString() }
+            ":title": { S: inputSearch.value.toString() }
         },
-        Limit: 10
+        Limit: 100,
+        ConsistentRead: false,
+        ExclusiveStartKey: undefined
     });
+
+    if (inputSearch.lastItem)
+        command.input.ExclusiveStartKey = {
+            "title": { S: inputSearch.lastItem.title },
+            "id": { S: inputSearch.lastItem.id }
+        };
+
     const response = await client.send(command);
 
-    return response.Items;
-
+    return { Items: response.Items, LastEvaluatedKey: response.LastEvaluatedKey, ScannedCount: response.ScannedCount };
 }
