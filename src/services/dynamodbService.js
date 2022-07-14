@@ -9,7 +9,7 @@ exports.SearchBlogPost = async function (key) {
     const client = new DynamoDBClient({ region: process.env.Region });
     const command = new QueryCommand({
         TableName: process.env.BlogPostTableName,
-        KeyConditionExpression: "begins_with(title, :title)",
+        KeyConditionExpression: "id = id and begins_with(title, :title)",
         ExpressionAttributeValues: {
             ":title": { S: key.toString() }
         },
