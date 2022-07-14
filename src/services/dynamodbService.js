@@ -16,7 +16,7 @@ exports.SearchBlogPost = async function (inputSearch) {
         ExpressionAttributeValues: {
             ":title": { S: inputSearch.value.toString() }
         },
-        Limit: 10,
+        Limit: 100,
         ConsistentRead: false,
         ExclusiveStartKey: undefined
     });
